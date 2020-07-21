@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+		
+		<title>选课学生</title>
+		<link rel="stylesheet" href="./plugins/layui/css/layui.css" media="all">
+		  <style>
+		    body{margin: 10px;}
+		    .demo-carousel{height: 200px; line-height: 200px; text-align: center;}
+		  </style>
+		</head>
+	</head>
+	<body>
+<!--		<button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onClick="javascript:history.back(-1);">返回</button>-->
+		<table class="layui-hide" id="studenttaskdemo" lay-filter="test"></table>
+		<script type="text/html" id="barDemo">
+			<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+		</script>
+		<script src="./plugins/layui/layui.js"></script>
+		<script>
+		 
+		layui.use(['table','element'], function(){
+		  table = layui.table //表格
+		  ,element = layui.element //元素操作
+		  
+		  //监听Tab切换
+		  element.on('tab(studenttaskdemo)', function(data){
+		    layer.tips('切换了 '+ data.index +'：'+ this.innerHTML, this, {
+		      tips: 1
+		    });
+		  });
+		  
+		  //执行一个 table 实例
+		  table.render({
+		    elem: '#studenttaskdemo'
+		    ,url: 'homework-student/studenttasklist' //数据接口
+		    ,title: '作业详情'
+		    ,page: true //开启分页
+		    ,cols: [
+		    		[ //表头
+		      {type: 'checkbox', fixed: 'left'}
+		      ,{field: 'id', title: 'ID', hide:true,width:80}
+		      ,{field: 'studentName', title: '学生姓名'}
+		      ,{field: 'title', title: '作业标题'}
+		      ,{field: 'finishTime', title: '完成时间'}
+		      ,{fixed: 'right', width: 165, align:'center', toolbar: '#barDemo'}
+		    ]
+			  ]
+		  });
+		  
+		  //监听行工具事件
+		  table.on('tool(test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+		    var data = obj.data //获得当前行数据
+		    ,layEvent = obj.event; //获得 lay-event 对应的值
+		    if(layEvent === 'detail'){
+		      //跳转到作业详细页面
+				window.location.href="/studenttaskdetail?id="+data.id
+		    }
+		  });
+		});
+		</script>
+	</body>
+</html>

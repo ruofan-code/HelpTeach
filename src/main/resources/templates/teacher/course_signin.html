@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<!--签到情况汇总 一个表格 展示所有的签到列表
+新添签到按钮
+-->
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+
+    <title>选课学生</title>
+    <link rel="stylesheet" href="plugins/layui/css/layui.css" media="all">
+    <style>
+        body {
+            margin: 10px;
+        }
+
+        .demo-carousel {
+            height: 200px;
+            line-height: 200px;
+            text-align: center;
+        }
+    </style>
+</head>
+</head>
+<body>
+<ul class="layui-nav">
+    <li class="layui-nav-item"><a onclick="student()">学生</a></li>
+    <li class="layui-nav-item"><a onclick="taska()">作业</a></li>
+    <li class="layui-nav-item"><a onclick="sign()">签到</a></li>
+</ul>
+<!-- 新建签到 -->
+<div class="layui-inline">
+    <label class="layui-form-label">签到时长:</label>
+    <div class="layui-input-inline">
+        <input type="text" class="layui-input" id="test-limit3">
+    </div>
+    <button type="button" class="layui-btn layui-btn-primary" onclick="addsignin()">添加签到</button>
+</div>
+<table class="layui-hide" id="class_signindemo" lay-filter="test"></table>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+</script>
+
+
+<script src="src/js/jquery-3.4.1.min.js"></script>
+<script src="plugins/layui/layui.js"></script>
+<script>
+    function student() {
+        window.location.href = "/course_student?courseId=" + location.search.split("=")[1].split("&")[0]
+    }
+
+    function taska() {
+        window.location.href = "/course_task?courseId=" + location.search.split("=")[1].split("&")[0]
+    }
+
+    function sign() {
+        window.location.href = "/course_signin?courseId=" + location.search.split("=")[1].split("&")[0]
+    }
+
+    layui.use(['table', 'element'], function () {
+        table = layui.table //表格
+            , element = layui.element //元素操作
+
+        //监听Tab切换
+        element.on('tab(class_signindemo)', function (data) {
+            layer.tips('切换了 ' + data.index + '：' + this.innerHTML, this, {
+                tips: 1
+            });
+        });
+
+        //执行一个 table 实例
+        table.render({
+            elem: '#class_signindemo'
+            , url: 'signup-teacher/classsigninlist' //数据接口
+            , title: '已签到学生'
+            , id: 'id'
+            , page: true //开启分页
+            , totalRow: true //开启合计行
+            , cols: [
+                [ //表头
+                    , {field: 'id', title: 'ID', hide: true, sort: true, fixed: 'left'}
+                    , {field: 'teacherName', title: '创建者姓名'}
+                    , {field: 'courseName', title: '课程'}
+                    , {field: 'startTime', title: '开始时间'}
+                    , {field: 'endTime', title: '结束时间'}
+                    // , {field: 'signupCount', title: '签到人数'}
+                    , {fixed: 'right', width: 165, align: 'center', toolbar: '#barDemo'}
+                ]
+            ]
+        });
+
+
+        //监听行工具事件
+        table.on('tool(test)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            var data = obj.data //获得当前行数据
+                , layEvent = obj.event; //获得 lay-event 对应的值
+            if (layEvent === 'detail') {
+                layer.open({
+                    type: 2,
+                    skin: 'lay-auto-size',
+                    area: ['80%', '80%'],
+                    offset: '0px',
+                    content: "signupTeacherDetail?id=" + data.id
+                });
+            }
+        });
+    });
+    layui.use('laydate', function () {
+        var laydate = layui.laydate;
+        //新建签到
+        laydate.render({
+            elem: '#test-limit3'
+            , type: 'time'
+            , min: '00:00:00'
+            , max: '1:00:00'
+            , btns: ['clear', 'confirm'],
+        });
+    })
+
+    function addsignin() {
+        var datatime = $("#test-limit3").val()
+        $.ajax({
+            url: "signup-teacher/addsignin",
+            type: "post",
+            //传给后台的数据
+            data: JSON.stringify({
+                datatime: datatime,
+            }),
+            contentType: "application/json",
+            dataType: "json",
+            success: function (resp) {
+                if (resp.code == 0) {
+                    table.reload('id')
+                    alert(resp.msg);
+                } else {
+                    alert("添加签到失败")
+                }
+            }
+        })
+
+    }
+</script>
+</body>
+</html>
+

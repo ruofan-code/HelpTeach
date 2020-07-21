@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>作业情况</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="./plugins/layui/css/layui.css" media="all"/>
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body>
+
+</body>
+<script type="text/html" id="toolbar">
+    <a class="layui-btn layui-btn-xs upload_btn" id="submit_homework" lay-event="submit_homework">提交作业</a>
+    <a class="layui-btn layui-btn-xs" lay-event="ck">查看</a>
+</script>
+<script src="./plugins/layui/layui.js"></script>
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<div class="layui-fluid">
+    <div class="layui-row">
+        <div class="layui-btn-container layui-col-xs12 layui-col-sm12 layui-col-md6 ">
+            <button class="layui-btn layui-btn-warm" data-type="refresh">
+                <i class="layui-icon layui-icon-refresh"></i>刷新
+            </button>
+        </div>
+    </div>
+    <table id="demo" lay-filter="test"></table>
+    </table>
+</div>
+<script>
+    layui.use(['table', 'upload'], function () {
+        var table = layui.table;
+        var $ = layui.$;
+        var upload = layui.upload;
+
+        table.render({
+            elem: '#demo'
+            , url: '/homework-student/getHomeworkByCourseId'
+            , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            , id: 'id'
+            , cols: [
+                [
+                    {type: 'numbers'},
+                    {type: 'checkbox'},
+                    {field: 'id', title: '编号', sort: true, hide: true}
+                    , {field: 'title', title: '作业名称', sort: true}
+                    , {field: 'content', title: '作业内容', sort: true}
+                    , {field: 'teacherName', title: '发布老师', sort: true}
+                    , {field: 'createTime', title: '发布时间', sort: true}
+                    , {field: 'finishTime', title: '完成时间', sort: true}
+                    , {
+                    fixed: 'right', title: '操作', width: 150, align: 'center', toolbar: '#toolbar'
+                    // , templet: function (d) {//这里的参数d是templete的固定用法，可以取到该行的所有数据
+                    //     // if (d.file_state == 0) {//未上传
+                    //         //class里的upload_btn是用来标志上传按钮的，没有定义实际的css样式
+                    //         return '<button class="layui-btn layui-btn-primary layui-btn-xs upload_btn" value="' + d.odd_numbers + '">上传</button>';
+                    //     // }
+                    //     // else { //已上传||被替换
+                    //     //     return '<button class="layui-btn layui-btn-xs replace_btn" value="' + d.odd_numbers + '">替换</button>' +
+                    //     //         '<button class="layui-btn layui-btn-danger layui-btn-xs delete_btn" lay-event="delete" value="' + d.odd_numbers + '">删除</button>'; //删除按钮不需要渲染上传，只是一个动作按钮，可以通过lay-event进行行事件监听
+                    //     // }
+                    // }
+                }
+                ]
+            ]
+            , done: function (res, curr, count) {
+                var tableId = this.id;
+                var tableElem = this.elem;
+                // var tableId1 = tableElem.data.id;
+                // //table render出来实际显示的table组件
+                var tableViewElem = tableElem.next();
+                upload.render({ //允许上传的文件后缀
+                    elem: tableViewElem.find('.upload_btn')
+                    , url: '/homework-student/upload'
+                    //改成您自己的上传接口'
+                    , accept: 'file' //普通文件
+                    , exts: 'zip|rar|7z' //只允许上传压缩文件
+                    , before: function (obj) { //obj包含信息，跟choose回调完全一致。在传值之前先获取id
+                        var tableElem = this.elem;
+                        console.log("msg1:" + JSON.stringify(tableElem));
+                        // alert(JSON.stringify(obj));
+                        uploadParam = tableElem.attr('value');
+                        // layui.alert(uploadParam);
+                        console.log("msg:" + uploadParam);
+                        layer.load(); //上传loading
+                    }
+                    , data: {
+                        // odd_number: function () {//data中写值的时候，要用动态获取的方式，即写个function的方式，不然直接写获取不到相应的值。
+                        //     return tableElem.data.id;
+                        // }
+                    }
+                    , done: function (res) {
+                        // var testdiv = document.getElementById("download");
+                        // var data = res.data;
+                        // testdiv.innerHTML="<p>"+data+"</p>";
+                        $('#download').text(res.data);
+                        layer.msg('上传成功');
+                        layer.closeAll('loading'); //关闭loading
+                        table.reload('id');
+                        console.log(res)
+                    }
+                });
+
+            }
+            , page: true
+        });
+        table.on('tool(test)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+            var tr = obj.tr;
+            var checkStatus = table.checkStatus('id'); //test即为基础参数id对应的值
+
+            if (layEvent === 'submit_homework') {
+                $.ajax({
+                    method: "post",
+                    url: '/homework-student/submitTeacherHomeworkId?id='+data.id,
+                    //traditional: true,
+                    // data: {"ids": ids},
+                    success: function (data) {
+                        // layer.close(index);
+                        // table.reload('id');
+                    }
+                });
+
+                // layer.alert("提交成功！");
+            } else if (layEvent === 'ck') {
+                layer.open({
+                    type: 2,
+                    skin: 'lay-auto-size',
+                    area: ['60%', '90%'],
+                    offset: '0px',
+                    content: '/studentTeacherHomeworkDetail?id=' + data.id
+                });
+            }
+        });
+
+        var active = {
+            //刷新
+            refresh: function () {
+                table.reload('id');
+            }
+        }
+
+        $('button[data-type]').click(function () {
+            var type = $(this).data('type');
+            active[type] && active[type].call(this);
+        });
+    })
+
+</script>
+
+</html>

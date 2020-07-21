@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>新建作业</title>
+    <link rel="stylesheet" href="plugins/layui/css/layui.css" media="all">
+</head>
+<body>
+<button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onClick="javascript:history.back(-1);">返回
+</button>
+<div class="layui-form-item">
+    <label class="layui-form-label">标题</label>
+    <div class="layui-input-block">
+        <input id="qustitle" type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input">
+    </div>
+</div>
+<div class="layui-form-item layui-form-text">
+    <label class="layui-form-label">题目</label>
+    <div class="layui-input-block">
+        <textarea id="qusetion" class="layui-textarea" name="desc"></textarea>
+    </div>
+</div>
+<div class="layui-form-item layui-form-text">
+    <label class="layui-form-label">上传附件</label>
+    <button type="button" class="layui-btn layui-btn-primary" id="test4"><i class="layui-icon"></i>上传附件(只允许压缩文件)
+    </button>
+<!--    <div id="download">-->
+<!--        <a href="/homework-teacher/download"></a>-->
+<!--    </div>-->
+        <a id="download" href="/homework-teacher/download"></a>
+</div>
+<button type="button" class="layui-btn" onclick="add()">添加</button>
+<button type="button" class="layui-btn" onClick="javascript:history.back(-1);">返回</button>
+<script src="./src/js/jquery-3.4.1.min.js"></script>
+<script src="./plugins/layui/layui.js"></script>
+<script>
+    function add() {
+        var qustitle = $("#qustitle").val();
+        var qusetion = $("#qusetion").val();
+        $.ajax({
+            url: "homework-teacher/addtask",
+            type: "post",
+            //传给后台的数据
+            data: {
+                qustitle: qustitle,
+                qusetion: qusetion,
+            },
+            // contentType: "application/json",
+            // dataType: "json",
+            success: function (resp) {
+                if (resp.code == 0) {
+                    alert(resp.msg);
+                } else {
+                    alert("添加失败")
+                }
+            }
+        });
+    }
+
+    layui.use(['form', 'upload'], function () {
+        var form = layui.form;
+        var $ = layui.$, upload = layui.upload;
+
+        upload.render({ //允许上传的文件后缀
+            elem: '#test4'
+            , url: '/homework-teacher/upload' //改成您自己的上传接口
+            , accept: 'file' //普通文件
+            , exts: 'zip|rar|7z' //只允许上传压缩文件
+            , done: function (res) {
+                // var testdiv = document.getElementById("download");
+                // var data = res.data;
+                // testdiv.innerHTML="<p>"+data+"</p>";
+                $('#download').text(res.data);
+                layer.msg('上传成功');
+                console.log(res)
+            }
+        });
+    });
+
+</script>
+</body>
+</html>

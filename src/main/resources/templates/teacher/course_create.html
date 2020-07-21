@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>发布通知</title>
+    <link rel="stylesheet" href="./plugins/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="./plugins/layui/lay/modules/form.js" media="all" />
+    <link rel="stylesheet" href="./plugins/font-awesome/css/font-awesome.css" media="all" />
+    <link rel="stylesheet" href="./src/css/app.css" media="all" />
+    <link rel="stylesheet" href="./src/css/themes/default.css" media="all" id="skin" kit-skin />
+</head>
+<body>
+<div>
+    <div class="layui-card" style="margin-bottom:0">
+        <div class="layui-card-body">
+            <form id="mainform" class="layui-form">
+
+                <div class="layui-form-item">
+                    <!--title-->
+                    <div class="layui-inline">
+                        <label class="layui-form-label">课程名</label>
+                        <div class="layui-input-block">
+                            <input id="name" name="name" class="layui-input" placeholder="请输入课程名" maxlength="10" lay-verify="required" lay-reqtext="标题是必填项" lay-filter="titlefilter" />
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+                <div class="layui-container">
+                    <div class="layui-row">
+                        <div class="layui-col-xs6 layui-col-sm6 layui-col-md6" style="padding:0 5px">
+                            <a class="layui-btn layui-btn-warm layui-btn-fluid" lay-submit lay-filter="*" id="submit">
+                                发布
+                            </a>
+                        </div>
+                        <div class="layui-col-xs6 layui-col-sm6 layui-col-md6" style="padding:0 5px">
+                            <button class="layui-btn layui-btn-normal layui-btn-fluid" id="reset" type="reset">
+                                取消
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="./plugins/layui/layui.js"></script>
+<script>
+    //Demo
+
+    layui.use('form', function () {
+        var form = layui.form;
+        var $ = layui.$;
+        form.render();
+        //监听提交
+        form.on('submit(*)', function (data) {
+            $.ajax({
+                url: '/course/teacherCreateCourse',
+                method: 'post',
+                data: data.field,
+                success: function (res) {
+                    layer.alert(res.msg, function (index) {
+                        layer.close(index);
+                        //提交成功
+                        var index2 = parent.layer.getFrameIndex(window.name);
+                        parent.layui.table.reload('id');//更新表格数据
+                        parent.layer.close(index2);
+                    });
+                }
+            });
+            return false;
+        });
+
+
+        $("#reset").click(function () {
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);
+        });
+
+    });
+</script>
+</body>
+</html>
