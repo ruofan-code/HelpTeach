@@ -65,13 +65,7 @@
 
                     <div class="layui-form-item">
                         <label class="layui-form-label">附件</label>
-                        <div class="layui-upload">
-                            <button type="button" class="layui-btn" id="btn_file">下载附件</button>
-                            <div class="layui-upload-list">
-                                <img class="layui-upload-img" id="imagedemo1">
-                                <p id="demoText"></p>
-                            </div>
-                        </div>
+                        <a id="download" href="/notice/studentDownload"></a>
                     </div>
 
                     <hr />
@@ -112,6 +106,8 @@
                     $('#teacherName').val(data.teacherName);
                     $('#createTime').val(data.createTime);
                     $('#content').val(data.content);
+                    if (data.filesrc!=null)
+                        $('#download').text(data.title);
                     form.render;
                 }
             });

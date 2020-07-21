@@ -83,6 +83,7 @@
                     , {field: 'id', title: 'ID', sort: true, fixed: 'left'}
                     // ,{field: 'courseName', title: '学生姓名', width:80}
                     , {field: 'field1', title: '学号'}
+                    , {field: 'studentId', title: '学生id',hide:true}
                     , {field: 'studentName', title: '学生姓名'}
                     , {fixed: 'right', width: 165, align: 'center', toolbar: '#barDemostudent'}
                 ]
@@ -100,7 +101,7 @@
                     skin: 'lay-auto-size',
                     area: ['80%', '80%'],
                     offset: '0px',
-                    content: "/student_signinList?" + location.search.split("?")[1] + "&studentid=" + data.id
+                    content: "/student_signinList?" + location.search.split("?")[1] + "&studentid=" + data.studentId
                 });
                 // window.location.href = "/student_signin?" + location.search.split("?")[1] + "&studentid=" + data.id;
             } else if (layEvent === 'del') {
@@ -110,7 +111,7 @@
                     skin: 'lay-auto-size',
                     area: ['80%', '80%'],
                     offset: '0px',
-                    content: "/student_taskList?" + location.search.split("?")[1] + "&studentid=" + data.id
+                    content: "/student_taskList?" + location.search.split("?")[1] + "&studentid=" + data.studentId
                 });
                 // window.location.href = "/student_task?" + location.search.split("?")[1] + "&studentid=" + data.id;
             }

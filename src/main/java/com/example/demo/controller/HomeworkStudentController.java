@@ -17,9 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -189,6 +192,43 @@ public class HomeworkStudentController {
     public void submitTeacherHomeworkId(HttpServletRequest request,String id){
         //保存即将上传的教师作业id
         request.getSession().setAttribute("studentHomeworkSubmitId", id);
+    }
+
+
+    @GetMapping("/teacherGetStudentHomeworkById")
+    public void teacherGetStudentHomeworkById(HttpServletResponse response,String id) throws IOException {
+        //        QueryWrapper<Notice> queryWrapper = new QueryWrapper<>();
+//        queryWrapper.eq("id",id);
+//        Notice one = noticeService.getOne(queryWrapper);
+//        String teacherHomeworkFileSrc = request.getSession().getAttribute("teacherHomeworkFileSrc").toString();
+//        Object teacherHomeworkFileName = request.getSession().getAttribute("teacherHomeworkFileName");
+        QueryWrapper<HomeworkStudent> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id",id);
+        HomeworkStudent homeworkStudent = homeworkStudentService.getOne(queryWrapper);
+        byte[] bytes = fastdfsUtil.downloadFile(homeworkStudent.getFilesrc());
+        // 这里只是为了整合fastdfs，所以写死了文件格式。需要在上传的时候保存文件名。下载的时候使用对应的格式
+        response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(homeworkStudent.getStudentName()+".rar", "UTF-8"));
+        response.setCharacterEncoding("UTF-8");
+        ServletOutputStream outputStream = null;
+        try {
+            outputStream = response.getOutputStream();
+            outputStream.write(bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                outputStream.flush();
+                outputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+//        QueryWrapper<Notice> queryWrapper = new QueryWrapper<>();
+//        queryWrapper.eq("id", id);
+//        Notice one = noticeService.getOne(queryWrapper);
+//        WebResponse webResponse = new WebResponse();
+//        webResponse.setData(one.getFilesrc());
+//        return webResponse;
     }
 
 }

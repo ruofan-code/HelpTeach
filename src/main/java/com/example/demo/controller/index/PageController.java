@@ -9,6 +9,10 @@ import javax.servlet.http.HttpSession;
 @Controller
 public class PageController {
 
+    @RequestMapping("/main")
+    public String imain(){
+        return "main";
+    }
     /**
      * @return
      * @description 学生，教师首页
@@ -45,7 +49,7 @@ public class PageController {
     @RequestMapping("/studentNoticeDetail")
     public String studentNoticeDetail(String id, HttpSession session) {
         session.setAttribute("noticeId", id);
-        return "/student/notice_detail";
+        return "student/notice_detail";
     }
 
     @RequestMapping("/teacherNotice")
@@ -69,13 +73,13 @@ public class PageController {
     @RequestMapping("/noticeEdit")
     public String teacherNoticeEdit(String id, HttpSession session) {
         session.setAttribute("noticeId", id);
-        return "/teacher/notice_edit";
+        return "teacher/notice_edit";
     }
 
     @RequestMapping("/teacherNoticeDetail")
     public String teacherNoticeDetail(String id, HttpSession session) {
         session.setAttribute("noticeId", id);
-        return "/teacher/notice_detail";
+        return "teacher/notice_detail";
     }
 
 

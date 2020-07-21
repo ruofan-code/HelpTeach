@@ -15,9 +15,9 @@
 	<body>
 <!--		<button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onClick="javascript:history.back(-1);">返回</button>-->
 		<table class="layui-hide" id="studenttaskdemo" lay-filter="test"></table>
-		<script type="text/html" id="barDemo">
-			<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
-		</script>
+<!--		<script type="text/html" id="barDemo">-->
+<!--			<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>-->
+<!--		</script>-->
 		<script src="./plugins/layui/layui.js"></script>
 		<script>
 		 
@@ -43,9 +43,9 @@
 		      {type: 'checkbox', fixed: 'left'}
 		      ,{field: 'id', title: 'ID', hide:true,width:80}
 		      ,{field: 'studentName', title: '学生姓名'}
-		      ,{field: 'title', title: '作业标题'}
+		      // ,{field: 'title', title: '作业标题'}
 		      ,{field: 'finishTime', title: '完成时间'}
-		      ,{fixed: 'right', width: 165, align:'center', toolbar: '#barDemo'}
+		      // ,{fixed: 'right', width: 165, align:'center', toolbar: '#barDemo'}
 		    ]
 			  ]
 		  });

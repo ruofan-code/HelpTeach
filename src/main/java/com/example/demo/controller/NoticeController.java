@@ -263,6 +263,39 @@ public class NoticeController {
 //        return webResponse;
 
     }
+    
+    /**
+     * @description 
+     * 学生下载通知附件
+     * @return
+     * @author 若凡
+     * @date 2020/7/21 14:49
+     */
+    @GetMapping("/studentDownload")
+    public void studentDownload(HttpServletRequest request,HttpServletResponse response) throws IOException {
+        String noticeId = request.getSession().getAttribute("noticeId").toString();
+        QueryWrapper<Notice> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id",noticeId);
+        Notice one = noticeService.getOne(queryWrapper);
+        byte[] bytes = fastdfsUtil.downloadFile(one.getFilesrc());
+        // 这里只是为了整合fastdfs，所以写死了文件格式。需要在上传的时候保存文件名。下载的时候使用对应的格式
+        response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(one.getTitle()+".rar", "UTF-8"));
+        response.setCharacterEncoding("UTF-8");
+        ServletOutputStream outputStream = null;
+        try {
+            outputStream = response.getOutputStream();
+            outputStream.write(bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                outputStream.flush();
+                outputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 }
 

@@ -78,13 +78,16 @@ public class UserController {
         }
         User student;
         StudentCourse studentCourse;
+        QueryWrapper<User> queryWrapper;
         for (int r = 1; r <= sheet.getLastRowNum(); r++) {
             Row row = sheet.getRow(r);
             if (row == null)
                 continue;
-            student = new User();
+//            student = new User();
             studentCourse = new StudentCourse();
-            for(int j=0;j<6;j++){
+            queryWrapper = new QueryWrapper<>();
+
+            for(int j=0;j<1;j++){
                 row.getCell(j).setCellType(CellType.STRING);
             }
 //            row.getCell(1).setCellType((CellType) String);
@@ -95,30 +98,34 @@ public class UserController {
 
             String username = row.getCell(0).getStringCellValue();
             String name = row.getCell(1).getStringCellValue();
-            String sex = row.getCell(2).getStringCellValue();
-            String phone = row.getCell(4).getStringCellValue();
-            String email = row.getCell(5).getStringCellValue();
-            String studentid= UUID.randomUUID().toString();
-            student.setId(studentid);
-            student.setRoleCode(0);
-            student.setUsername(username);
-            student.setName(name);
-            student.setPassword("123456");
-            student.setSex(sex);
-            student.setPhone(phone);
-            student.setEmail(email);
-            student.setUsername(username);
+//            String sex = row.getCell(2).getStringCellValue();
+//            String phone = row.getCell(4).getStringCellValue();
+//            String email = row.getCell(5).getStringCellValue();
+//            String studentid= UUID.randomUUID().toString();
+
+            queryWrapper.eq("username",username);
+            student = userService.getOne(queryWrapper);
+
+//            student.setId(studentid);
+//            student.setRoleCode(2);
+//            student.setUsername(username);
+//            student.setName(name);
+//            student.setPassword("123456");
+//            student.setSex(sex);
+//            student.setPhone(phone);
+//            student.setEmail(email);
+//            student.setUsername(username);
 //            System.out.println(student);
             studentCourse.setId(UUID.randomUUID().toString());
             studentCourse.setCourseId(courseId);
             studentCourse.setTeacherId(course.getTeacherId());
             studentCourse.setTeacherName(course.getTeacherName());
-            studentCourse.setStudentId(studentid);
+            studentCourse.setStudentId(student.getId());
             studentCourse.setStudentName(name);
             //field1存学号
             studentCourse.setField1(username);
             studentCourse.setCourseName(course.getName());
-            iUserService.save(student);
+//            iUserService.save(student);
             iStudentCourseService.save(studentCourse);
 
         }

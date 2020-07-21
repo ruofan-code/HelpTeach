@@ -17,7 +17,7 @@
     <div class="layui-card" style="margin-bottom:0">
         <div class="layui-card-body">
             <form id="mainform" class="layui-form">
-                <div class="layui-form-item">
+                <div class="layui-form-item layui-hide">
                     <!--title-->
                     <div class="layui-inline">
                         <label class="layui-form-label">id</label>
@@ -74,16 +74,8 @@
 
                 <div class="layui-form-item">
                     <label class="layui-form-label">附件</label>
-                    <div class="layui-upload">
-                        <button type="button" class="layui-btn" id="btn_file"><a onclick="downloadfile()">下载附件</a>
-                        </button>
-                        <div class="layui-upload-list">
-                            <img class="layui-upload-img" id="imagedemo1">
-                            <p id="demoText"></p>
-                        </div>
-                    </div>
+                    <a id="download" onclick="downloadfile()"></a>
                 </div>
-
 
                 <hr/>
                 <div class="layui-container">
@@ -139,6 +131,9 @@
                 $('#teacherName').val(data.teacherName);
                 $('#createTime').val(data.createTime);
                 $('#content').val(data.content);
+                if (data.filesrc!=null)
+                    $('#download').text(data.title);
+                form.render;
                 form.render;
             }
         });

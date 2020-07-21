@@ -44,6 +44,7 @@
                     {type: 'numbers'},
                     {type: 'checkbox'},
                     {field: 'id', title: '编号', sort: true, hide: true}
+                    ,{field: 'courseId', title: '课程编号', sort: true, hide: true}
                     , {field: 'courseName', title: '课程名称', sort: true}
                     , {field: 'teacherName', title: '老师姓名', sort: true}
                     , {fixed: 'right', title: '操作', width: 250, align: 'center', toolbar: '#toolbar'}
@@ -63,7 +64,7 @@
                     skin: 'lay-auto-size',
                     area: ['90%', '90%'],
                     offset: '0px',
-                    content: '/signupStudent?courseId=' + data.id
+                    content: '/signupStudent?courseId=' + data.courseId
                 });
             } else if (layEvent === 'homework') {
                 layer.open({
@@ -71,7 +72,7 @@
                     skin: 'lay-auto-size',
                     area: ['90%', '90%'],
                     offset: '0px',
-                    content: '/stuHomework?courseId=' + data.id
+                    content: '/stuHomework?courseId=' + data.courseId
                 });
             }
         });
